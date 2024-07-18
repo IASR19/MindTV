@@ -3,7 +3,7 @@ import psycopg2
 import time
 
 def save_gsr_hr_data(participant_id, ir_value, bpm, avg_bpm, gsr_value):
-    conn = psycopg2.connect(dbname='neurodata', user='postgres', password='yourpassword', host='localhost')
+    conn = psycopg2.connect(dbname='mindtvdata', user='postgres', password='yourpassword', host='localhost')
     cursor = conn.cursor()
     
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S')

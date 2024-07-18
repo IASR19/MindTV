@@ -2,7 +2,7 @@ import psycopg2
 from pyOpenBCI import OpenBCICyton
 
 def save_eeg_data(participant_id, eeg_data):
-    conn = psycopg2.connect(dbname='neurodata', user='postgres', password='yourpassword', host='localhost')
+    conn = psycopg2.connect(dbname='mindtvdata', user='postgres', password='yourpassword', host='localhost')
     cursor = conn.cursor()
     
     for timestamp, channels in eeg_data:
