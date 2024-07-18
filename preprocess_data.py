@@ -14,7 +14,6 @@ def bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-# Carregar dados do banco de dados
 def load_data():
     conn = psycopg2.connect(dbname='mindtvdata', user='postgres', password='yourpassword', host='localhost')
     cursor = conn.cursor()
@@ -36,4 +35,5 @@ eeg_data, gsr_data = load_data()
 fs = 250  # Frequência de amostragem
 lowcut = 1.0
 highcut = 50.0
-eeg_filtered = bandpass_filter(eeg_data, lowcut, highcut, fs)
+eeg_channels = [data[3:] for data in eeg_data]  # Ajuste conforme a estrutura dos dados
+eeg_filtered = [bandpass_filter(channel, lowcut, highcut, fs) for channel in np.array(eeg_channels).T]
