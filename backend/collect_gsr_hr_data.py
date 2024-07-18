@@ -33,7 +33,7 @@ def get_current_show(tv_schedule):
             return show['show']['name']
     return "No show currently airing"
 
-ser = serial.Serial('/dev/tty.usbmodem14101', 115200)  # Ajuste a porta conforme necessário
+ser = serial.Serial('/dev/tty.usbserial-1420', 115200)  # Ajuste a porta conforme necessário
 participant_id = 1  # ID do participante
 
 while True:

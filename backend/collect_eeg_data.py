@@ -41,6 +41,6 @@ def eeg_callback(sample):
     channels = sample.channels_data
     save_eeg_data(participant_id, [(timestamp, channels)], current_show)
 
-board = OpenBCICyton(port='/dev/ttyUSB0', daisy=True)
+board = OpenBCICyton(port='/dev/tty.usbserial-1420', daisy=True)
 participant_id = 1  # ID do participante
 board.start_stream(eeg_callback)
