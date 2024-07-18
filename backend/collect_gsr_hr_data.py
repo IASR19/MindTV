@@ -1,3 +1,4 @@
+import sys
 import serial
 import psycopg2
 import time
@@ -5,7 +6,7 @@ import requests
 import datetime
 
 def save_gsr_hr_data(participant_id, ir_value, bpm, avg_bpm, gsr_value, current_show):
-    conn = psycopg2.connect(dbname='neurodata', user='postgres', password='yourpassword', host='localhost')
+    conn = psycopg2.connect(dbname='mindtvdata', user='postgres', password='yourpassword', host='localhost')
     cursor = conn.cursor()
     
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -33,14 +34,20 @@ def get_current_show(tv_schedule):
             return show['show']['name']
     return "No show currently airing"
 
-ser = serial.Serial('/dev/tty.usbserial-1420', 115200)  # Ajuste a porta conforme necessário
-participant_id = 1  # ID do participante
+if __name__ == '__main__':
+    port = sys.argv[1]
+    ser = serial.Serial(port, 115200)  # Ajuste a porta conforme necessário
+    participant_id = 1  # ID do participante
 
-while True:
-    tv_schedule = fetch_tv_schedule()
-    current_show = get_current_show(tv_schedule)
-    
-    if ser.in_waiting:
-        line = ser.readline().decode('utf-8').strip()
-        ir_value, bpm, avg_bpm, gsr_value = map(float, line.split(','))
-        save_gsr_hr_data(participant_id, ir_value, bpm, avg_bpm, gsr_value, current_show)
+    while True:
+        tv_schedule = fetch_tv_schedule()
+        current_show = get_current_show(tv_schedule)
+        
+        if ser.in_waiting:
+            line = ser.readline().decode('utf-8').strip()
+            values = line.split(',')
+            if len(values) == 4:
+                ir_value, bpm, avg_bpm, gsr_value = map(float, values)
+                save_gsr_hr_data(participant_id, ir_value, bpm, avg_bpm, gsr_value, current_show)
+            else:
+                print(f"Received an incomplete line: {line}")

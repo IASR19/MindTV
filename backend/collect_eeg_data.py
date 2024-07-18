@@ -1,11 +1,11 @@
+import sys
 import psycopg2
 from pyOpenBCI import OpenBCICyton
 import requests
 import datetime
-import time
 
 def save_eeg_data(participant_id, eeg_data, current_show):
-    conn = psycopg2.connect(dbname='neurodata', user='postgres', password='yourpassword', host='localhost')
+    conn = psycopg2.connect(dbname='mindtvdata', user='postgres', password='yourpassword', host='localhost')
     cursor = conn.cursor()
     
     for timestamp, channels in eeg_data:
@@ -41,6 +41,8 @@ def eeg_callback(sample):
     channels = sample.channels_data
     save_eeg_data(participant_id, [(timestamp, channels)], current_show)
 
-board = OpenBCICyton(port='/dev/tty.usbserial-1420', daisy=True)
-participant_id = 1  # ID do participante
-board.start_stream(eeg_callback)
+if __name__ == '__main__':
+    port = sys.argv[1]
+    board = OpenBCICyton(port=port, daisy=True)
+    participant_id = 1  # ID do participante
+    board.start_stream(eeg_callback)
