@@ -42,5 +42,5 @@ while True:
     
     if ser.in_waiting:
         line = ser.readline().decode('utf-8').strip()
-        ir_value, bpm, avg_bpm, gsr_value = map(int, line.split(','))
+        ir_value, bpm, avg_bpm, gsr_value = map(float, line.split(','))
         save_gsr_hr_data(participant_id, ir_value, bpm, avg_bpm, gsr_value, current_show)
