@@ -1,23 +1,37 @@
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-import numpy as np
-from preprocess_data import eeg_filtered
-from preprocess_data import eeg_data
 
+# Carregar dados pré-processados
+eeg_data = np.genfromtxt('eeg_data_processed.csv', delimiter=',', dtype=None, encoding='utf-8')
+gsr_data = np.genfromtxt('gsr_data_processed.csv', delimiter=',', dtype=None, encoding='utf-8')
 
-# Supondo que eeg_filtered e gsr_data estejam no formato correto para treinamento
-X = np.array(eeg_filtered).T  # Ajuste conforme a estrutura dos dados
-y = [data[1] for data in eeg_data]  # Etiquetas de categorias visuais
+# Extrair recursos e rótulos (categorias de programas de TV)
+X_eeg = np.array([list(row[3:]) for row in eeg_data])  # Dados de EEG
+y_eeg = np.array([row[2] for row in eeg_data])         # Programas de TV correspondentes
+
+X_gsr = np.array([list(row[3:]) for row in gsr_data])  # Dados de GSR
+y_gsr = np.array([row[2] for row in gsr_data])         # Programas de TV correspondentes
 
 # Dividir dados em treino e teste
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train_eeg, X_test_eeg, y_train_eeg, y_test_eeg = train_test_split(X_eeg, y_eeg, test_size=0.3, random_state=42)
+X_train_gsr, X_test_gsr, y_train_gsr, y_test_gsr = train_test_split(X_gsr, y_gsr, test_size=0.3, random_state=42)
 
-# Treinar modelo
-clf = RandomForestClassifier(n_estimators=100)
-clf.fit(X_train, y_train)
+# Treinar modelo para dados de EEG
+clf_eeg = RandomForestClassifier(n_estimators=100)
+clf_eeg.fit(X_train_eeg, y_train_eeg)
 
-# Avaliar modelo
-y_pred = clf.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print("Acurácia:", accuracy)
+# Treinar modelo para dados de GSR
+clf_gsr = RandomForestClassifier(n_estimators=100)
+clf_gsr.fit(X_train_gsr, y_train_gsr)
+
+# Avaliar modelo para dados de EEG
+y_pred_eeg = clf_eeg.predict(X_test_eeg)
+accuracy_eeg = accuracy_score(y_test_eeg, y_pred_eeg)
+print("Acurácia EEG:", accuracy_eeg)
+
+# Avaliar modelo para dados de GSR
+y_pred_gsr = clf_gsr.predict(X_test_gsr)
+accuracy_gsr = accuracy_score(y_test_gsr, y_pred_gsr)
+print("Acurácia GSR:", accuracy_gsr)
